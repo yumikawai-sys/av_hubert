@@ -44,9 +44,8 @@ def apply_transform(transform, img, std_size):
     return warped
 
 def get_frame_count(filename):
-    # print('filename', filename)
     filename = '../preparation/clip.mp4'
-    print('filename', filename)
+    print('get_filename', filename)
     cap = cv2.VideoCapture(filename)
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     cap.release()
@@ -54,7 +53,7 @@ def get_frame_count(filename):
 
 def read_video(filename):
     filename = '../preparation/clip.mp4'
-    print('filename', filename)
+    print('read_filename', filename)
     cap = cv2.VideoCapture(filename)
     while(cap.isOpened()):                                                 
         ret, frame = cap.read() # BGR
@@ -144,17 +143,23 @@ def crop_patch(video_pathname, landmarks, mean_face_landmarks, stablePntsIDs, ST
     num_frames = get_frame_count(video_pathname)
     frame_gen = read_video(video_pathname)
     margin = min(num_frames, window_margin)
+    print('num_frames', num_frames)
+    print('frame_gen', frame_gen)
+    print('margin', margin)
+
     while True:
         try:
             frame = frame_gen.__next__() ## -- BGR
         except StopIteration:
             break
+        print('crop1')
         if frame_idx == 0:
             q_frame, q_landmarks = deque(), deque()
             sequence = []
-
+        print('crop2')
         q_landmarks.append(landmarks[frame_idx])
         q_frame.append(frame)
+        print('crop3')
         if len(q_frame) == margin:
             smoothed_landmarks = np.mean(q_landmarks, axis=0)
             cur_landmarks = q_landmarks.popleft()
@@ -170,6 +175,7 @@ def crop_patch(video_pathname, landmarks, mean_face_landmarks, stablePntsIDs, ST
                                         trans_landmarks[start_idx:stop_idx],
                                         crop_height//2,
                                         crop_width//2,))
+        print('crop4')
         if frame_idx == len(landmarks)-1:
             while q_frame:
                 cur_frame = q_frame.popleft()
@@ -184,6 +190,7 @@ def crop_patch(video_pathname, landmarks, mean_face_landmarks, stablePntsIDs, ST
                                             crop_width//2,))
             return np.array(sequence)
         frame_idx += 1
+        print('crop5')
     return None
 
 
@@ -232,15 +239,15 @@ if __name__ == '__main__':
     for filename_idx, filename in enumerate(tqdm(fids)):
 
         print('args.video_direc', args.video_direc)
-        print('filename', filename)
+        print('video_filename', filename)
         video_pathname = os.path.join(args.video_direc, filename+'.mp4')
 
         print('args.landmark_direc', args.landmark_direc)
-        print('filename', filename)
+        print('land_filename', filename)
         landmarks_pathname = os.path.join(args.landmark_direc, filename+'.pkl')
 
         print('args.save_direc', args.save_direc)
-        print('filename', filename)
+        print('save_filename', filename)
         dst_pathname = os.path.join(args.save_direc, filename+'.mp4')
 
         assert os.path.isfile(video_pathname), "File does not exist. Path input: {}".format(video_pathname)
