@@ -45,6 +45,8 @@ def apply_transform(transform, img, std_size):
 
 def get_frame_count(filename):
     print('filename', filename)
+    filename = '../preparation/clip.mp4'
+    print('filename', filename)
     cap = cv2.VideoCapture(filename)
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     cap.release()
