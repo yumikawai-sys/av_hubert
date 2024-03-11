@@ -44,6 +44,7 @@ def apply_transform(transform, img, std_size):
     return warped
 
 def get_frame_count(filename):
+    print('filename', filename)
     cap = cv2.VideoCapture(filename)
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     cap.release()
@@ -135,6 +136,7 @@ def crop_patch(video_pathname, landmarks, mean_face_landmarks, stablePntsIDs, ST
     """
 
     frame_idx = 0
+    print('video_pathname', video_pathname)
     num_frames = get_frame_count(video_pathname)
     frame_gen = read_video(video_pathname)
     margin = min(num_frames, window_margin)
@@ -213,16 +215,26 @@ if __name__ == '__main__':
     mean_face_landmarks = np.load(args.mean_face)
     stablePntsIDs = [33, 36, 39, 42, 45]
 
+    print('args.filename_path', args.filename_path)
+    
     lines = open(args.filename_path).readlines()
     fids = [ln.strip() for ln in lines]
     num_per_shard = math.ceil(len(fids)/args.nshard)
     start_id, end_id = num_per_shard*args.rank, num_per_shard*(args.rank+1)
     fids = fids[start_id: end_id]
+    print('fids', fids)
     for filename_idx, filename in enumerate(tqdm(fids)):
 
+        print('args.video_direc', args.video_direc)
+        print('filename', filename)
         video_pathname = os.path.join(args.video_direc, filename+'.mp4')
 
+        print('args.landmark_direc', args.landmark_direc)
+        print('filename', filename)
         landmarks_pathname = os.path.join(args.landmark_direc, filename+'.pkl')
+
+        print('args.save_direc', args.save_direc)
+        print('filename', filename)
         dst_pathname = os.path.join(args.save_direc, filename+'.mp4')
 
         assert os.path.isfile(video_pathname), "File does not exist. Path input: {}".format(video_pathname)
@@ -244,6 +256,7 @@ if __name__ == '__main__':
             continue
 
         # -- crop
+        print('video_pathname', video_pathname)
         sequence = crop_patch(video_pathname, preprocessed_landmarks, mean_face_landmarks, stablePntsIDs, STD_SIZE, window_margin=args.window_margin, start_idx=args.start_idx, stop_idx=args.stop_idx, crop_height=args.crop_height, crop_width=args.crop_width)
         assert sequence is not None, "cannot crop from {}.".format(filename)
 
