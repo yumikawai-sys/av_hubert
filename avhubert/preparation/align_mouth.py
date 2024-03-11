@@ -192,8 +192,9 @@ def landmarks_interpolate(landmarks):
     """Interpolate landmarks
     param list landmarks: landmarks detected in raw videos
     """
-
+    print('landmarks', landmarks)
     valid_frames_idx = [idx for idx, _ in enumerate(landmarks) if _ is not None]
+    print('valid_frames_idx', valid_frames_idx)
     if not valid_frames_idx:
         return None
     for idx in range(1, len(valid_frames_idx)):
@@ -202,6 +203,7 @@ def landmarks_interpolate(landmarks):
         else:
             landmarks = linear_interpolate(landmarks, valid_frames_idx[idx-1], valid_frames_idx[idx])
     valid_frames_idx = [idx for idx, _ in enumerate(landmarks) if _ is not None]
+    print('valid_frames_idx', valid_frames_idx)
     # -- Corner case: keep frames at the beginning or at the end failed to be detected.
     if valid_frames_idx:
         landmarks[:valid_frames_idx[0]] = [landmarks[valid_frames_idx[0]]] * valid_frames_idx[0]
