@@ -44,7 +44,7 @@ def apply_transform(transform, img, std_size):
     return warped
 
 def get_frame_count(filename):
-    print('filename', filename)
+    # print('filename', filename)
     filename = '../preparation/clip.mp4'
     print('filename', filename)
     cap = cv2.VideoCapture(filename)
@@ -53,6 +53,8 @@ def get_frame_count(filename):
     return total
 
 def read_video(filename):
+    filename = '../preparation/clip.mp4'
+    print('filename', filename)
     cap = cv2.VideoCapture(filename)
     while(cap.isOpened()):                                                 
         ret, frame = cap.read() # BGR
@@ -138,7 +140,7 @@ def crop_patch(video_pathname, landmarks, mean_face_landmarks, stablePntsIDs, ST
     """
 
     frame_idx = 0
-    print('video_pathname', video_pathname)
+    # print('video_pathname', video_pathname)
     num_frames = get_frame_count(video_pathname)
     frame_gen = read_video(video_pathname)
     margin = min(num_frames, window_margin)
@@ -258,7 +260,7 @@ if __name__ == '__main__':
             continue
 
         # -- crop
-        print('video_pathname', video_pathname)
+        # print('video_pathname', video_pathname)
         sequence = crop_patch(video_pathname, preprocessed_landmarks, mean_face_landmarks, stablePntsIDs, STD_SIZE, window_margin=args.window_margin, start_idx=args.start_idx, stop_idx=args.stop_idx, crop_height=args.crop_height, crop_width=args.crop_width)
         assert sequence is not None, "cannot crop from {}.".format(filename)
 
